@@ -1,0 +1,20 @@
+{
+  "name": "torpedojs",
+  "description": "Single App framework",
+  "version": "1.0.0",
+  "homepage": "http://github.com/benjaminchelli/torpedojs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/benjaminchelli/torpedojs.git"
+  },
+  "engines": {
+    "node": ">=0.4.7"
+  },
+  "dependencies": {
+    "handlebars": "~1.0"
+  , "backbone": "~1.0"
+  , "underscore":"1.5.1"
+  },
+  "devDependencies": {},
+  "main": "torpedojs.js"
+}
