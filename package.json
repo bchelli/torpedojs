@@ -17,5 +17,8 @@
   , "watch":"0.8.0"
   },
   "devDependencies": {},
+  "bin": {
+    "torpedo": "bin/torpedo"
+  },
   "main": "torpedojs.js"
 }
