@@ -1,6 +1,22 @@
 
 $(function(){
 
+  var getRouteCallback = function(name, fn){
+    return function(){
+      // init loading
+      Torpedo.loading(true);
+
+      // detatch events
+      Torpedo.detachEvents();
+
+      // call the template call back
+      Templates[name][fn].apply(
+        Templates[name]
+      , Array.prototype.slice.apply(arguments)
+      );
+    }
+  };
+
   // init routers
   for(var name in Templates){
     if(Templates[name].routes){
@@ -12,14 +28,7 @@ $(function(){
         routes.routes[route] = fn;
 
         // set the callback
-        routes[fn] = (function(name, fn){
-          return function(){
-            Templates[name][fn].apply(
-              Templates[name]
-            , Array.prototype.slice.apply(arguments)
-            );
-          }
-        })(name, fn);
+        routes[fn] = getRouteCallback(name, fn);
 
       }
       var PageRouter = Backbone.Router.extend(routes);
