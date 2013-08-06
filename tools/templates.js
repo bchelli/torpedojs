@@ -116,7 +116,7 @@ module.exports = {
         var result = [];
         for(var i in files){
           if(files[i].indexOf('./static/') === 0) continue;
-          result[result.length] = ''+fs.readFileSync(files[i]);
+          result[result.length] = ';(function(){'+fs.readFileSync(files[i])+'})();';
         }
         fs.writeFileSync(output, result.join(''));
         cb();
