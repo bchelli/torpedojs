@@ -165,10 +165,35 @@ var Template;
   };
 
   Template.prototype.render = function(helpers){
-    var helpers = _.extend(this.helpers || {}, helpers);
-    var content = this._handlebars_render(helpers);
-    $('#torpedo-page').html(content);
-    Torpedo.loading(false);
+    var that = this
+      , nbPromises = 0
+      ;
+    helpers = helpers || {};
+    function renderFactory(attr){
+      return function(value){
+        if(attr){
+          nbPromises--;
+          helpers[attr] = value;
+        }
+        if(nbPromises>0) return;
+        helpers = _.extend(that.helpers || {}, helpers);
+        var content = that._handlebars_render(helpers);
+        $('#torpedo-page').html(content);
+        if(that.afterRender) setTimeout(function(){that.afterRender()}, 1);
+        Torpedo.loading(false);
+      }
+    }
+    if(that.data){
+      for(var d in that.data){
+        if(that.data[d].promise){
+          nbPromises++;
+          that.data[d].then(renderFactory(d));
+        } else {
+          helpers[d] = that.data[d];
+        }
+      }
+    }
+    renderFactory()();
   };
 
 })();

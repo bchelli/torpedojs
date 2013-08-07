@@ -1,8 +1,10 @@
 
+TODO
+----
+
 * clean up event managment
 
 * add model managment (linked to API endpoint)
-    - must be promesses to render templates
     - must be reactive to template rendering
 
 * create a Session object to keep state of data in the application
@@ -11,3 +13,11 @@
 * create documentation
 
 * create npm repository
+
+
+
+
+DONE
+----
+* Templates can now have data attr that are jQuery promises that holds the rendering of a template
+    - v.alpha of a model managment
