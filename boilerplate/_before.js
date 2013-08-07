@@ -185,11 +185,12 @@ var Template;
     }
     if(that.data){
       for(var d in that.data){
-        if(that.data[d].promise){
+        var obj = that.data[d]();
+        if(obj.promise){
           nbPromises++;
-          that.data[d].then(renderFactory(d));
+          obj.then(renderFactory(d));
         } else {
-          helpers[d] = that.data[d];
+          helpers[d] = obj;
         }
       }
     }
