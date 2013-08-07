@@ -2,6 +2,10 @@
 TODO
 ----
 
+* manage 404, 500, etc... no internet connection
+
+* manage promise fails
+
 * clean up event managment
 
 * add model managment (linked to API endpoint)
