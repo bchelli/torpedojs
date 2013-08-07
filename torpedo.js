@@ -18,7 +18,9 @@ var Torpedo =   require(process.env.ROOT_DIR+'/lib/torpedo')
 
 
 
-var activeRes = [];
+/*
+ * WATCH & SERVE
+ */
 watch.watchTree('./', function(f){
   if(f && f.indexOf && f.indexOf('.torpedo/') === 0) return;
   server.serve();
