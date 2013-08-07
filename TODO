@@ -1,0 +1,13 @@
+
+* clean up event managment
+
+* add model managment (linked to API endpoint)
+    - must be promesses to render templates
+    - must be reactive to template rendering
+
+* create a Session object to keep state of data in the application
+    - on refresh keep state of a form
+
+* create documentation
+
+* create npm repository
