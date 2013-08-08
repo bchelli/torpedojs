@@ -4,6 +4,8 @@ TODO
 
 * manage 404, 500, etc... no internet connection
 
+* manage routers (navigation)
+
 * manage promise fails
 
 * clean up event managment
