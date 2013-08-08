@@ -7,7 +7,7 @@ $(function(){
       Torpedo.loading(true);
 
       // detatch events
-      Torpedo.detachEvents();
+      Torpedo.events.detachEvents();
 
       // call the template call back
       Templates[name][fn].apply(
