@@ -1,5 +1,6 @@
 var fs = require(process.env.ROOT_DIR+'/utils/fs')
   , hb = require('handlebars')
+  , path = require('path')
   ;
 
 var tmplRegExp = /\<template([^\>]*)\>([^]*)\<\/template\>/
@@ -74,6 +75,7 @@ module.exports = {
         var templatesConfig = [];
         var templatesInstantiation = [];
         var heads = [];
+        templatesConfig[templatesConfig.length] = 'Templates = {};\n'
         for(var i in files){
 
           if(files[i].indexOf('./static/') === 0) continue;
@@ -84,15 +86,12 @@ module.exports = {
           var tmpls = extractTemplates(content);
           for(var j in tmpls){
             templatesConfig[templatesConfig.length] = 'Templates["'+tmpls[j].attrs['name']+'"] = {\n'
-                                                        +'"_handlebars_render":'+hb.precompile(tmpls[j].inner)+',\n'
-                                                        +'"_attrs":'+JSON.stringify(tmpls[j].attrs)+'\n'
+                                                        +'"name":"'+tmpls[j].attrs['name']+'",\n'
+                                                        +'"template":Handlebars.compile('+JSON.stringify(tmpls[j].inner)+'),\n'
+                                                        +'"options":'+JSON.stringify(tmpls[j].attrs)+'\n'
                                                       +'};\n\n';
 
-            templatesInstantiation[templatesInstantiation.length] = 'Templates["'+tmpls[j].attrs['name']+'"] = new Template(Templates["'+tmpls[j].attrs['name']+'"]);\n\n';
-            templatesInstantiation[templatesInstantiation.length] = 'Handlebars.registerPartial(\n'
-                                                                      +'"'+tmpls[j].attrs['name']+'",\n'
-                                                                      +'Templates["'+tmpls[j].attrs['name']+'"]._handlebars_render'
-                                                                    +');\n\n';
+            templatesInstantiation[templatesInstantiation.length] = 'new Torpedo.Template(Templates["'+tmpls[j].attrs['name']+'"]);\n\n';
           }
 
           // step 2 - extract the headers
@@ -102,7 +101,11 @@ module.exports = {
           }
 
         }
-        fs.writeFileSync(outputHeaders,                 heads.join(''));
+        if(fs.existsSync(outputHeaders)){
+          fs.appendFileSync(outputHeaders, heads.join('\n'));
+        } else {
+          fs.writeFileSync(outputHeaders, heads.join('\n'));
+        }
         fs.writeFileSync(outputTemplatesConfig,         templatesConfig.join(''));
         fs.writeFileSync(outputTemplatesInstantiation,  templatesInstantiation.join(''));
         cb();
@@ -110,15 +113,21 @@ module.exports = {
       pattern: /^.*\.html$/
     });
   }
-, processJavascripts:function(output, cb){
+, processJavascripts:function(outputDir, outputHeaders, cb){
     fs.scanDir({
       cb:function(files){
-        var result = [];
+        var heads = [];
         for(var i in files){
           if(files[i].indexOf('./static/') === 0) continue;
-          result[result.length] = ';(function(){'+fs.readFileSync(files[i])+'})();';
+          heads[heads.length] = '<script src="js/'+files[i]+'" type="text/javascript"></script>';
+          fs.mkPath(outputDir+files[i]);
+          fs.writeFileSync(outputDir+files[i], fs.readFileSync(files[i]));
         }
-        fs.writeFileSync(output, result.join(''));
+        if(fs.existsSync(outputHeaders)){
+          fs.appendFileSync(outputHeaders, heads.join('\n'));
+        } else {
+          fs.writeFileSync(outputHeaders, heads.join('\n'));
+        }
         cb();
       },
       pattern: /^.*\.js$/

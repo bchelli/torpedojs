@@ -10,6 +10,19 @@ var fs = module.exports =   require('fs')
 /*
  * SCAN DIR HELPER
  */
+var mkPath = module.exports.mkPath = function(file){
+  var p = path.dirname(file);
+  if(!fs.existsSync(p)){
+    mkPath(p);
+    fs.mkdirSync(p);
+  }
+}
+
+
+
+/*
+ * SCAN DIR HELPER
+ */
 var scanDir = module.exports.scanDir = function(obj){
   // set default values
   obj =         obj         || {};
