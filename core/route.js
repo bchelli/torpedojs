@@ -10,6 +10,7 @@
    * LIST OF THE ROUTES
    */
   var routes = [], lastFragment;
+  var error404Urls = '#error/404';
 
 
   /*
@@ -101,6 +102,9 @@
         routes[i].fn(o);
         return;
       }
+    }
+    if(location.hash != error404Urls) {
+      location.hash = error404Urls;
     }
   }
 
