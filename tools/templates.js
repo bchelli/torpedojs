@@ -86,9 +86,9 @@ module.exports = {
           var tmpls = extractTemplates(content);
           for(var j in tmpls){
             templatesConfig[templatesConfig.length] = 'Templates["'+tmpls[j].attrs['name']+'"] = {\n'
-                                                        +'"name":"'+tmpls[j].attrs['name']+'",\n'
+                                                        +'"templateName":"'+tmpls[j].attrs['name']+'",\n'
                                                         +'"template":Handlebars.compile('+JSON.stringify(tmpls[j].inner)+'),\n'
-                                                        +'"options":'+JSON.stringify(tmpls[j].attrs)+'\n'
+                                                        +'"attrs":'+JSON.stringify(tmpls[j].attrs)+'\n'
                                                       +'};\n\n';
 
             templatesInstantiation[templatesInstantiation.length] = 'new Torpedo.Template(Templates["'+tmpls[j].attrs['name']+'"]);\n\n';

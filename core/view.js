@@ -40,6 +40,7 @@
     opts.context  = opts.context  || {};
     opts.events   = opts.events   || {};
     opts.options  = opts.options  || {};
+    opts.parent   = opts.parent   || {};
 
     // initialize the params (from the route)
     this.params = opts.params     || {};
@@ -54,7 +55,7 @@
     this._reactives = [];
 
     // required options
-    var requiredOpts = ['id', 'template'];
+    var requiredOpts = ['id', 'templateName'];
     for(var i=0,l=requiredOpts.length;i<l;i++){
       var o = requiredOpts[i];
       if(typeof opts[o] == 'undefined'){
@@ -311,10 +312,23 @@
 
   // GENERATE THE HTML CONTENT
   var getContent = function(context){
+    var tmpl = Torpedo.getTemplate(this._opts.templateName)
+      , parentTmpl = this._opts.parent.templateName ? Torpedo.getTemplate(this._opts.parent.templateName) : {_opts:{}}
+      ;
+
+    // propagate helpers
+    this._opts.options.helpers = this._opts.options.helpers || {};
+    _.extend(
+      this._opts.options.helpers
+    , Templates.helpers           || {}
+    , parentTmpl._opts.helpers    || {}
+    , tmpl._opts.helpers          || {}
+    );
+
     // init view pile
     viewPile.unshift(this);
     // get the content of the template
-    var content = Torpedo.getTemplate(this._opts.template).getHtml(context, this._opts.options, this);
+    var content = tmpl.getHtml(context, this._opts.options);
     // init view pile
     viewPile.shift();
 

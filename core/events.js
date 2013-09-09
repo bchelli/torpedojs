@@ -7,20 +7,31 @@
 
 
   /*
+   * HELPERS
+   */
+  function initEventStack(obj){
+    if(!obj._evStack){
+      obj._evStack = {};
+      obj._evId = 0;
+    }
+  }
+
+
+  /*
    * EVENTS
    */
-  var evStack = {}
-    , evId = 0
-    , Events = Torpedo.Events = {
+  var Events = Torpedo.Events = {
         on:function(key, cb){
-          evStack[key] = evStack[key] || [];
-          evId++;
-          cb._evId = evId;
-          evStack[key].push(cb);
+          initEventStack(this);
+          this._evStack[key] = this._evStack[key] || [];
+          this._evId++;
+          cb._evId = this._evId;
+          this._evStack[key].push(cb);
         }
       , off:function(key, cb){
-          if(!_.isArray(evStack[key])) return;
-          var evs = evStack[key];
+          initEventStack(this);
+          if(!_.isArray(this._evStack[key])) return;
+          var evs = this._evStack[key];
           for(var i=evs.length-1;i>=0;i--){
             if(evs[i]._evId === cb._evId){
               evs.splice(i, 1);
@@ -28,8 +39,9 @@
           }
         }
       , trigger:function(key, obj){
-          if(!_.isArray(evStack[key])) return;
-          var evs = evStack[key];
+          initEventStack(this);
+          if(!_.isArray(this._evStack[key])) return;
+          var evs = this._evStack[key];
           for(var i=evs.length-1;i>=0;i--){
             setTimeout((function(index){
               return function(){

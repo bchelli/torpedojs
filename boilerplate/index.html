@@ -18,6 +18,11 @@
         z-index: 2;
       }
     </style>
+    {{head}}
+  </head>
+  <body>
+    <div id="torpedo-page"></div>
+    <div id="torpedo-loading"></div>
 
     <!-- VENDORS -->
     <script src="vendors/jquery-2.0.3.js"></script>
@@ -33,12 +38,9 @@
 
     <!-- CUSTOM -->
     <script src="templates_config.js"></script>
-    {{head}}
+    {{scripts}}
     <script src="templates_instantiation.js"></script>
-  </head>
-  <body>
-    <div id="torpedo-page"></div>
-    <div id="torpedo-loading"></div>
+
     <script type="text/javascript">
       $(function(){
         Torpedo.Route.init();

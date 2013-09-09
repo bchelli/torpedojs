@@ -35,7 +35,7 @@
     this._opts   = opts = opts   || {};
 
     // required options
-    var requiredOpts = ['name', 'template'];
+    var requiredOpts = ['templateName', 'template'];
     for(var i=0,l=requiredOpts.length;i<l;i++){
       var o = requiredOpts[i];
       if(typeof opts[o] == 'undefined'){
@@ -44,7 +44,7 @@
     }
 
     // add to the template manager
-    templates[opts.name] = this;
+    templates[opts.templateName] = this;
 
     // register the routes
     if(opts.routes) {
@@ -54,7 +54,7 @@
 
     // register the partial
     Handlebars.registerPartial(
-      opts.name
+      opts.templateName
     , function(context, options){
 
         var id = 'torpedo-partial-'+(++partialId)
@@ -67,15 +67,15 @@
         setTimeout(function(){
 
           new Torpedo.View({
-            id        : id
+            id            : id
 
-          , template  : opts.name
-          , events    : opts.events
+          , templateName  : opts.templateName
+          , events        : opts.events
 
-          , context   : context
-          , options   : options
+          , context       : context
+          , options       : options
 
-          , parent    : parentView
+          , parent        : parentView
 
           , onRendered: function(){
               $('#'+id).append('<div>')

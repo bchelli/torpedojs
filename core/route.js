@@ -54,12 +54,12 @@
       if(Torpedo.masterView){
         Torpedo.masterView.destroy();
       }
-      Torpedo.masterView = new Torpedo.View({
+      var opts = {
         id:'torpedo-page'
-      , template:template._opts.name
       , params:params
-      , context:template._opts.context
-      });
+      };
+      _.extend(opts, template._opts);
+      Torpedo.masterView = new Torpedo.View(opts);
     }
   }
 
@@ -99,6 +99,7 @@
         var o = {};
         _.each(routes[i].attrsName, function(name, index){ o[name] = m[index]; });
         routes[i].fn(o);
+        return;
       }
     }
   }
