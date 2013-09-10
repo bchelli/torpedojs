@@ -38,6 +38,14 @@
             }
           }
         }
+      , once:function(key, cb){
+          var self = this;
+          function theCB(){
+            self.off(key, theCB);
+            cb.apply(null, Array.prototype.slice.call(arguments));
+          }
+          self.on(key, theCB);
+        }
       , trigger:function(key, obj){
           initEventStack(this);
           if(!_.isArray(this._evStack[key])) return;
