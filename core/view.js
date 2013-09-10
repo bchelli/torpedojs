@@ -67,7 +67,7 @@
     initEvents.call(this);
 
     // run custom initialize function
-    if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this);
+    if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this)();
 
     // finally render it !!!
     this.render();

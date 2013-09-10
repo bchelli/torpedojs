@@ -79,7 +79,7 @@
 
           , initialize: function(){
               // run custom initialize function
-              if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this);
+              if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this)();
 
               // remove container of the sub view
               this.on('render-after', function(){
