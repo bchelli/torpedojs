@@ -39,25 +39,23 @@
           }
         }
       , once:function(key, cb){
-          var self = this;
-          function theCB(){
-            self.off(key, theCB);
-            cb.apply(null, Array.prototype.slice.call(arguments));
-          }
-          self.on(key, theCB);
+          cb._once = true;
+          this.on(key, cb);
         }
       , trigger:function(key, obj){
+          var self = this;
           initEventStack(this);
           if(!_.isArray(this._evStack[key])) return;
           var evs = this._evStack[key];
           for(var i=evs.length-1;i>=0;i--){
-            setTimeout((function(index){
+            setTimeout((function(cb){
               return function(){
-                if(evs[index]){
-                  evs[index](obj);
-                }
+                // trigger
+                if(cb) cb(obj);
+                // remove if once
+                if(cb._once) self.off(key, cb);
               }
-            })(i), 0);
+            })(evs[i]), 0);
           }
         }
       }
