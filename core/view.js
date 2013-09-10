@@ -210,7 +210,9 @@
           Torpedo.loading(true);
           // carry an event listener => listen to changes from it
           if(d && d.on) {
-            self.listenToOnce(d, 'change', getContextForKey);
+            self.listenTo(d, 'change', function(){
+              getContextForKey();
+            });
           }
           if(d && d.then){
             // if a promise

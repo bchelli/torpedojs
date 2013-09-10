@@ -48,9 +48,9 @@
 
 
   /*
-   * GET FUNCTION
+   * GET MODEL FUNCTION
    */
-  ModelFactory.prototype.get = function(opts, forceRefresh) {
+  ModelFactory.prototype.getModel = function(opts, forceRefresh) {
     var url = this._opts.url;
     if(_.isFunction(url)) url = _.bind(url, this)(opts);
 
