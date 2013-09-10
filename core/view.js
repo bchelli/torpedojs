@@ -66,6 +66,9 @@
     // init events
     initEvents.call(this);
 
+    // run custom initialize function
+    if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this);
+
     // finally render it !!!
     this.render();
 
@@ -84,6 +87,9 @@
   View.prototype.render = function() {
 
     var self = this;
+
+    // trigger render-before
+    self.trigger('render-before');
 
     // fetch the data
     fetchContext.call(self, function(context){
@@ -110,12 +116,8 @@
       // save child nodes
       saveChildNodes.call(self);
 
-      // call on render event
-      if(self._opts.onRendered){
-        self._opts.onRendered();
-        delete self._opts.onRendered;
-      }
-
+      // trigger render-after
+      self.trigger('render-after');
     });
 
   };
