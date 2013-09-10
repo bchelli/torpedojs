@@ -128,7 +128,7 @@
    */
   View.prototype.destroy = function(doNotCleanReactives) {
 
-    // detach events
+    // detach DOM events
     detachEvents.call(this);
 
     // destroy subviews
@@ -145,6 +145,9 @@
     };
 
     if(!doNotCleanReactives){
+      // detach events
+      this.stopListening();
+
       // clean childs
       var r;
       while(r = this._reactives.shift()) {
@@ -204,10 +207,17 @@
           if(typeof d == 'function') d = d.call(self);
           count++;
           Torpedo.loading(true);
-          // if a promise
+          // carry an event listener => listen to changes from it
+          if(d && d.on) {
+            self.listenTo(d, 'change', function(){
+              getContextForKey();
+            });
+          }
           if(d && d.then){
+            // if a promise
             d.always(onContextFetched(key));
           } else {
+            // if a regular value
             onContextFetched(key)(d);
           }
         }
