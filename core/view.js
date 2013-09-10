@@ -201,6 +201,7 @@
     //   + set all static values
     count++; // force to finish the loop
     for(var key in this._opts.context){
+      var setContextForKey = onContextFetched(key);
       var getContextForKey = (function(key){
         return function(){
           var d = self._opts.context[key];
@@ -209,16 +210,14 @@
           Torpedo.loading(true);
           // carry an event listener => listen to changes from it
           if(d && d.on) {
-            self.listenTo(d, 'change', function(){
-              getContextForKey();
-            });
+            self.listenToOnce(d, 'change', getContextForKey);
           }
           if(d && d.then){
             // if a promise
-            d.always(onContextFetched(key));
+            d.always(setContextForKey);
           } else {
             // if a regular value
-            onContextFetched(key)(d);
+            setContextForKey(d);
           }
         }
       })(key);
