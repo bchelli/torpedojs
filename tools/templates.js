@@ -119,7 +119,7 @@ module.exports = {
         var heads = [];
         for(var i in files){
           if(files[i].indexOf('./static/') === 0) continue;
-          heads[heads.length] = '<script src="js/'+files[i]+'" type="text/javascript"></script>';
+          heads[heads.length] = '<script src="'+path.normalize('js/'+files[i])+'" type="text/javascript"></script>';
           fs.mkPath(outputDir+files[i]);
           fs.writeFileSync(outputDir+files[i], fs.readFileSync(files[i]));
         }
