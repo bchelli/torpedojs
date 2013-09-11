@@ -9,8 +9,20 @@
   /*
    * LIST OF THE ROUTES
    */
-  var routes = [], lastFragment;
+  var routes = [], lastFragment, _pageId=0;
   var error404Urls = '#error/404';
+
+
+  /*
+   * PAGE ANIMATION HELPERS
+   */
+  Torpedo.hidePage = function($page, cb){
+    window.scrollTo(0,0);
+    if(cb) cb();
+  }
+  Torpedo.showPage = function($page, cb){
+    if(cb) cb();
+  }
 
 
   /*
@@ -52,15 +64,25 @@
   // render factory
   function renderFactory(template){
     return function(params){
-      if(Torpedo.masterView){
-        Torpedo.masterView.destroy();
-      }
       var opts = {
-        id:'torpedo-page'
+        id:'torpedo-page-'+(++_pageId)
       , params:params
       };
+      $('#torpedo-app').append('<div class="torpedo-page" id="'+opts.id+'" />');
       _.extend(opts, template._opts);
-      Torpedo.masterView = new Torpedo.View(opts);
+      var newMasterView = new Torpedo.View(opts);
+      function showNewMasterView(){
+        Torpedo.showPage($('#'+newMasterView._opts.id), function(){
+          Torpedo.masterView = newMasterView;
+        });
+      }
+      if(Torpedo.masterView){
+        Torpedo.hidePage($('#'+Torpedo.masterView._opts.id), function(){
+          Torpedo.masterView.destroy();
+          $('#'+Torpedo.masterView._opts.id).remove();
+          showNewMasterView();
+        });
+      } else showNewMasterView();
     }
   }
 

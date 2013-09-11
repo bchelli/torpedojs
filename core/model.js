@@ -50,13 +50,13 @@
   /*
    * GET MODEL FUNCTION
    */
-  ModelFactory.prototype.getModel = function(opts, forceRefresh) {
+  ModelFactory.prototype.getModel = function(params, options) {
     var url = this._opts.url;
-    if(_.isFunction(url)) url = _.bind(url, this)(opts);
+    if(_.isFunction(url)) url = _.bind(url, this)(params);
 
     var result = getCache.call(this, url);
 
-    if(!result || !!forceRefresh){
+    if(!result || !!(options && options.forceRefresh)){
       // create a promise
       result = new Torpedo.Promise();
       // AJAX request
@@ -67,14 +67,17 @@
       , cache:false
       }).then(function(data, textStatus, jqXHR){
         setCacheFromXHR.call(self, url, result, jqXHR);
-        result.fulfill(data);
+        if(JSON.stringify(result.value) !== JSON.stringify(data)){
+          result.fulfill(data);
+          result.trigger('change');
+        }
       }, function(jqXHR, textStatus, errorThrown){
         setCacheFromXHR.call(self, url, result, jqXHR);
         result.reject();
       });
       // get the expire (default 60s)
       var expire = this._opts.expire || 60;
-      if(_.isFunction(expire)) expire = _.bind(expire, this)(opts);
+      if(_.isFunction(expire)) expire = _.bind(expire, this)(params);
       // set the cache
       setCache.call(this, url, result, expire);
     }
