@@ -64,13 +64,23 @@
   // render factory
   function renderFactory(template){
     return function(params){
+
+      // create opts for the view
       var opts = {
         id:'torpedo-page-'+(++_pageId)
       , params:params
       };
-      $('#torpedo-app').append('<div class="torpedo-page" id="'+opts.id+'" />');
+
+      // add template opts
       _.extend(opts, template._opts);
+
+      // create the container
+      $('#torpedo-app').append('<div class="torpedo-page" id="'+opts.id+'" />');
+
+      // create the view
       var newMasterView = new Torpedo.View(opts);
+
+      // transition from the old view to the new one
       function showNewMasterView(){
         Torpedo.showPage($('#'+newMasterView._opts.id), function(){
           Torpedo.masterView = newMasterView;
