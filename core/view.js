@@ -55,13 +55,7 @@
     this._reactives = [];
 
     // required options
-    var requiredOpts = ['id', 'templateName'];
-    for(var i=0,l=requiredOpts.length;i<l;i++){
-      var o = requiredOpts[i];
-      if(typeof opts[o] == 'undefined'){
-        throw new Error('Required parameter '+o+' is missing');
-      }
-    }
+    this.requiredOptions('id', 'templateName');
 
     // init events
     initEvents.call(this);
@@ -76,9 +70,15 @@
 
 
   /*
+   * EXTENDS FROM BASE
+   */
+  _.extend(View.prototype, Torpedo.Base);
+
+
+  /*
    * EXTENDS WITH EVENTS
    */
-  _.extend(View.prototype, Torpedo.Events);
+  _.extend(View.prototype, Backbone.Events);
 
 
   /*
@@ -208,15 +208,19 @@
           if(typeof d == 'function') d = d.call(self);
           count++;
           Torpedo.loading(true);
+
           // carry an event listener => listen to changes from it
           if(d && d.on) {
             self.listenTo(d, 'change', function(){
               getContextForKey();
             });
           }
-          if(d && d.then){
+
+          // manage promise
+          var prom = d && d.promise ? d.promise() : d;
+          if(prom && prom.then){
             // if a promise
-            d.always(setContextForKey);
+            prom.always(setContextForKey);
           } else {
             // if a regular value
             setContextForKey(d);

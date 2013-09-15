@@ -26,7 +26,7 @@
   /*
    * EXTENDS WITH EVENTS
    */
-  _.extend(Promise.prototype, Torpedo.Events);
+  _.extend(Promise.prototype, Backbone.Events);
 
 
   /*

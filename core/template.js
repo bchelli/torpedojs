@@ -35,13 +35,7 @@
     this._opts   = opts = opts   || {};
 
     // required options
-    var requiredOpts = ['templateName', 'template'];
-    for(var i=0,l=requiredOpts.length;i<l;i++){
-      var o = requiredOpts[i];
-      if(typeof opts[o] == 'undefined'){
-        throw new Error('Required parameter '+o+' is missing');
-      }
-    }
+    this.requiredOptions('templateName', 'template');
 
     // add to the template manager
     templates[opts.templateName] = this;
@@ -98,9 +92,15 @@
 
 
   /*
+   * EXTENDS FROM BASE
+   */
+  _.extend(Template.prototype, Torpedo.Base);
+
+
+  /*
    * EXTENDS WITH EVENTS
    */
-  _.extend(Template.prototype, Torpedo.Events);
+  _.extend(Template.prototype, Backbone.Events);
 
 
   /*
