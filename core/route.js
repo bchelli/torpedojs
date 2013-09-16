@@ -15,12 +15,28 @@
   /*
    * PAGE ANIMATION HELPERS
    */
+  var animation = [], isAnimating = false;
   Torpedo.hidePage = function($page, cb){
     window.scrollTo(0,0);
     if(cb) cb();
   }
   Torpedo.showPage = function($page, cb){
     if(cb) cb();
+  }
+  function _processAnimation(){
+    if(!isAnimating && animation.length>0){
+      isAnimating = true;
+      animation[0]();
+    }
+  }
+  function pushAnimation(fn){
+    animation.push(fn);
+    _processAnimation();
+  }
+  function animationDone(fn){
+    animation.shift();
+    isAnimating = false;
+    _processAnimation();
   }
 
 
@@ -109,26 +125,28 @@
       });
       newMasterView.render();
 
-      // transition from the old view to the new one
       function showNewMasterView(){
         if(!rendered || !transitionOver) return;
         Torpedo.showPage($('#'+newMasterView._opts.id), function(){
           Torpedo.masterView = newMasterView;
+          animationDone();
         });
       }
+
+      // transition from the old view to the new one
       if(Torpedo.masterView){
-        Torpedo.hidePage($('#'+Torpedo.masterView._opts.id), function(){
-          // destroy old master view
-          Torpedo.masterView.destroy();
-          $('#'+Torpedo.masterView._opts.id).remove();
-          // show the new master view
-          transitionOver = true;
-          showNewMasterView();
+        pushAnimation(function(){
+          Torpedo.hidePage($('#'+Torpedo.masterView._opts.id), function(){
+            // destroy old master view
+            Torpedo.masterView.destroy();
+            $('#'+Torpedo.masterView._opts.id).remove();
+            // show the new master view
+            transitionOver = true;
+            animationDone();
+          });
         });
-      } else {
-        transitionOver = true;
-        showNewMasterView();
-      }
+      } else transitionOver = true;
+      pushAnimation(showNewMasterView);
     }
   }
 
