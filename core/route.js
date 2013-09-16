@@ -99,21 +99,36 @@
       $('#torpedo-app').append('<div class="torpedo-page" id="'+opts.id+'" />');
 
       // create the view
-      var newMasterView = new Torpedo.View(opts);
+      var newMasterView = new Torpedo.View(opts)
+        , rendered = false
+        , transitionOver = false
+        ;
+      newMasterView.on('render-after', function(){
+        rendered = true;
+        showNewMasterView();
+      });
+      newMasterView.render();
 
       // transition from the old view to the new one
       function showNewMasterView(){
+        if(!rendered || !transitionOver) return;
         Torpedo.showPage($('#'+newMasterView._opts.id), function(){
           Torpedo.masterView = newMasterView;
         });
       }
       if(Torpedo.masterView){
         Torpedo.hidePage($('#'+Torpedo.masterView._opts.id), function(){
+          // destroy old master view
           Torpedo.masterView.destroy();
           $('#'+Torpedo.masterView._opts.id).remove();
+          // show the new master view
+          transitionOver = true;
           showNewMasterView();
         });
-      } else showNewMasterView();
+      } else {
+        transitionOver = true;
+        showNewMasterView();
+      }
     }
   }
 

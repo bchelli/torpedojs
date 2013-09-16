@@ -20,10 +20,18 @@
   /*
    * LOADING HELPERS
    */
-  var isLoading = 0;
+  var isLoading = 0, isLoadingTo;
   Torpedo.loading = function(state){
     isLoading += state ? 1 : -1;
-    $('#torpedo-loading').css({'display':(isLoading>0?'block':'none')});
+    if(isLoadingTo) clearTimeout(isLoadingTo);
+    if(isLoading>0){
+      // start the loading screen only if the loading is actually long
+      isLoadingTo = setTimeout(function(){
+        $('#torpedo-loading').css({'display':'block'});
+      }, 200);
+    } else {
+      $('#torpedo-loading').css({'display':'none'});
+    }
   }
 
 
@@ -62,9 +70,6 @@
 
     // run custom initialize function
     if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this)();
-
-    // finally render it !!!
-    this.render();
 
   };
 
@@ -135,7 +140,6 @@
     var sv;
     while(sv = this._subViews.shift()) {
       sv.destroy();
-
     };
 
     // clean childs
@@ -201,8 +205,8 @@
     //   + set all static values
     count++; // force to finish the loop
     for(var key in this._opts.context){
-      var setContextForKey = onContextFetched(key);
       var getContextForKey = (function(key){
+        var setContextForKey = onContextFetched(key);
         return function(){
           var d = self._opts.context[key];
           if(typeof d == 'function') d = d.call(self);
@@ -220,7 +224,9 @@
           var prom = d && d.promise ? d.promise() : d;
           if(prom && prom.then){
             // if a promise
-            prom.always(setContextForKey);
+            prom.always(function(data){
+              setContextForKey(data);
+            });
           } else {
             // if a regular value
             setContextForKey(d);

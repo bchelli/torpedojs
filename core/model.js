@@ -11,6 +11,8 @@
    */
   var Model = Torpedo.Model = function(opts){
 
+    var self = this;
+
     // initialize the options
     this._opts        = opts = opts       || {};
     opts.expire       = opts.expire       || 60;
@@ -21,6 +23,20 @@
 
     // create a promise
     this._promise = new Torpedo.Promise();
+
+    // create the Backbone model handling the data
+    var BackboneStandardModel = Backbone.Model.extend();
+    this._model = new BackboneStandardModel();
+
+    // proxy events from the Backbone Model to the Torpedo Model 
+    this._model.on('all', function(eventType){
+      if(eventType === 'change'){
+        self._promise.fulfill(
+          self._model.toJSON()
+        );
+      }
+      self.trigger.apply(self, Array.prototype.slice.call(arguments));
+    });
 
   };
 
@@ -62,15 +78,11 @@
 
       self.trigger('set-expire', getExpireFromXHR.call(self, jqXHR));
 
-      if(!this.responseText || this.responseText !== jqXHR.responseText){
-        this.responseText = jqXHR.responseText;
+      // preprocess the data
+      data = self._opts.processData(data)
 
-        self._promise.fulfill(
-          self._opts.processData(data)
-        );
-
-        self.trigger('change');
-      }
+      // set the data to the model
+      self._model.set(data);
 
     }, function(jqXHR, textStatus, errorThrown){
 

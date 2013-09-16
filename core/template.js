@@ -60,7 +60,7 @@
         // render the subview once the container is in place
         setTimeout(function(){
 
-          new Torpedo.View({
+          var v = new Torpedo.View({
             id            : id
 
           , templateName  : opts.templateName
@@ -71,17 +71,18 @@
 
           , parent        : parentView
 
-          , initialize: function(){
-              // run custom initialize function
-              if(_.isFunction(opts.initialize)) _.bind(opts.initialize, this)();
+          , initialize    : opts.initialize
 
-              // remove container of the sub view
-              this.on('render-after', function(){
-                $('#'+id).append('<div>')
-                $('#'+id+' :last').unwrap().remove();
-              });
-            }
           });
+
+          // remove container of the sub view
+          v.on('render-after', function(){
+            $('#'+id).append('<div>')
+            $('#'+id+' :last').unwrap().remove();
+          });
+
+          // render
+          v.render();
 
         }, 0);
 
