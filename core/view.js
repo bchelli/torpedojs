@@ -178,6 +178,7 @@
 
   // FETCH IF NEEDED THE CONTEXT
   var fetchContext = function(callback) {
+    Torpedo.loading(true);
     var self = this
       , count = 0
       , context = {}
@@ -190,9 +191,11 @@
         if(key){
           context[key] = value;
           count--;
+        }
+        if(count === 0 && !!callback) {
+          callback(context);
           Torpedo.loading(false);
         }
-        if(count === 0 && !!callback) callback(context);
       }
       if(key){
         return cb;
@@ -211,14 +214,16 @@
           var d = self._opts.context[key];
           if(typeof d == 'function') d = d.call(self);
           count++;
-          Torpedo.loading(true);
 
-          // carry an event listener => listen to changes from it
-          if(d && d.on) {
-            self.listenTo(d, 'change', function(){
-              getContextForKey();
-            });
-          }
+          var setChangeEvent = function (){
+            // carry an event listener => listen to changes from it
+            setTimeout(function(){
+              if(d && d.on) {
+                self.stopListening(d, 'change', getContextForKey);
+                self.listenToOnce (d, 'change', getContextForKey);
+              }
+            }, 0);
+          };
 
           // manage promise
           var prom = d && d.promise ? d.promise() : d;
@@ -226,10 +231,12 @@
             // if a promise
             prom.always(function(data){
               setContextForKey(data);
+              setChangeEvent();
             });
           } else {
             // if a regular value
             setContextForKey(d);
+            setChangeEvent();
           }
         }
       })(key);
