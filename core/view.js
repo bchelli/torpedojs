@@ -155,7 +155,7 @@
       // clean childs
       var r;
       while(r = this._reactives.shift()) {
-        Torpedo.Session.stop(r);
+        Torpedo.Reactive.Manager.stop(r);
       };
     }
 
