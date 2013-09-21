@@ -202,3 +202,8 @@ Server.prototype.stop = function(cb){
 };
 
 
+Server.prototype.getServer = function(){
+  return this._server;
+};
+
+
