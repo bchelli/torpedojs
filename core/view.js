@@ -240,7 +240,7 @@
           }
         }
       })(key);
-      pushReactive.call(self, Torpedo.Session.start(getContextForKey));
+      pushReactive.call(self, Torpedo.Reactive.Manager.start(getContextForKey));
     }
     count--; // now can be triggered
 
