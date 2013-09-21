@@ -28,7 +28,7 @@
           Torpedo.Reactive.Manager.on(eventKey, fn._reactive_cb);
         }
       }
-      return this._reactive_vars[key];
+      return !!key ? this._reactive_vars[key] : this._reactive_vars;
     }
   , set:function(key, value, opt){
 
@@ -58,6 +58,10 @@
       }
 
       return this;
+    }
+  , reset:function(values, opt){
+      this._reactive_vars = {};
+      this.set(values, opt);
     }
   };
 

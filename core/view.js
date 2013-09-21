@@ -215,29 +215,14 @@
           if(typeof d == 'function') d = d.call(self);
           count++;
 
-          var setChangeEvent = function (){
-            // carry an event listener => listen to changes from it
-            setTimeout(function(){
-              if(d && d.on) {
-                self.stopListening(d, 'change', getContextForKey);
-                self.listenToOnce (d, 'change', getContextForKey);
-              }
-            }, 0);
-          };
+          // manage Reactive
+          if(d && d.get) d.get();
 
           // manage promise
           var prom = d && d.promise ? d.promise() : d;
-          if(prom && prom.then){
-            // if a promise
-            prom.always(function(data){
-              setContextForKey(data);
-              setChangeEvent();
-            });
-          } else {
-            // if a regular value
-            setContextForKey(d);
-            setChangeEvent();
-          }
+          if(prom && prom.then) prom.always(setContextForKey);
+          // if a regular value
+          else setContextForKey(d);
         }
       })(key);
       pushReactive.call(self, Torpedo.Reactive.Manager.start(getContextForKey));

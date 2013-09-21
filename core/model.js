@@ -31,9 +31,9 @@
     // proxy events from the Backbone Model to the Torpedo Model 
     this._model.on('all', function(eventType){
       if(eventType === 'change'){
-        self._promise.fulfill(
-          self._model.toJSON()
-        );
+        var data = self._model.toJSON();
+        self._promise.fulfill(data);
+        self.reset({data:data});
       }
       self.trigger.apply(self, Array.prototype.slice.call(arguments));
     });
@@ -51,6 +51,12 @@
    * EXTENDS WITH EVENTS
    */
   _.extend(Model.prototype, Backbone.Events);
+
+
+  /*
+   * EXTENDS WITH REACTIVE
+   */
+  _.extend(Model.prototype, Torpedo.Reactive.Client);
 
 
   /*
